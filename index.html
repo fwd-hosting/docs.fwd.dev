@@ -1,0 +1,147 @@
+<!-- 
+ _______     ___           _______.____    ____
+|   ____|   /   \         /   ____|\   \  /   /
+|  |__     /  ^  \       |   (      \   \/   / 
+|   __|   /  /_\  \       \   \      \_    _/  
+|  |____ /  _____  \  .----)   |       |  |    
+|_______/__/     \__\ |_______/        |__|    
+==============================================
+DON'T EDIT THIS FILE. USE CONFIG.JSON INSTEAD.
+==============================================
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.png">
+    <link rel="stylesheet" type="text/css" href="assets/vendor/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="assets/vendor/font-awesome/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="assets/vendor/magnific-popup/magnific-popup.min.css" />
+    <link rel="stylesheet" type="text/css" href="assets/vendor/highlight.js/styles/github.css" />
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet.css" />
+    <link rel="stylesheet" type="text/css" href="assets/css/dark-mode.css" />
+    <link rel="stylesheet" type="text/css" href="../custom.css" />
+  </head>
+  <body data-target=".fwd-navigation">
+    <div class="preloader">
+      <div class="lds-ellipsis">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+    <div id="main-wrapper">
+      <header id="header" class="sticky-top">
+        <nav class="primary-menu navbar navbar-expand-lg navbar-dropdown-dark">
+          <div class="container-fluid">
+            <button @click="menu =!menu" id="sidebarCollapse" :class="`navbar-toggler d-block d-md-none ${menu ? 'show' : ''}`" type="button">
+              <span></span>
+              <span class="w-75"></span>
+              <span class="w-50"></span>
+            </button>
+            <a v-if="logoIsImage" class="logo" title="" @click="reload()">
+                <img :src="config.logo" :style="`max-width: ${config.logoSize || config.size || '100'}px; vertical-align: ${config.logoAlign || config.align || 'middle'};`" alt="">
+            </a>
+            <a v-if="!logoIsImage" class="logo" title="" @click="reload()">{{ config.logo }}</a>
+            <span v-if="config.version" class="text-2 ml-2">{{ config.version }}</span>
+            <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#header-nav">
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+            <div id="header-nav" class="collapse navbar-collapse justify-content-end">
+              <ul class="navbar-nav">
+                <li v-for="a in config.menu" class="dropdown">
+                  <a class="dropdown-toggle" :href="a.href || a.url || a.link" target="_blank">{{ a.title }}</a>
+                </li>
+              </ul>
+            </div>
+            <div @click="toggleDarkMode()" class="dark-toggle">
+              <div>
+                <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="https://www.w3.org/2000/svg">
+                  <path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8V16Z" fill="currentColor" />
+                  <path clip-rule="evenodd" d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2ZM12 4V8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16V20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4Z" fill="currentColor" fill-rule="evenodd" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </header>
+      <div id="content" role="main">
+        <div :class="`fwd-navigation ${menu ? 'active' : ''}`">
+          <ul class="nav flex-column ">
+            <li v-for="i of config.sections" class="nav-item">
+              <a :class="`nav-link ${ (!show && !active) || active.title == config.sections[0].title || (active && active.title == i.title) ? 'active' : '' }`" @click="section(i); show = false; scrollTop();">{{ i.title }}</a>
+              <ul v-if="active === i" class="nav flex-column">
+                <li v-for="item of active.titles" class="nav-item">
+                  <a :class="`nav-link ${href === slug(item.title) ? 'active' : ''}`" @click="scrollTo(item); closeNav()">{{ item.title }}</a>
+                </li>
+              </ul>
+            </li>
+            <li @click="show = 'faq'; active = false; closeNav(); pushstate('/faq')" v-if="config.faq" class="nav-item">
+              <a :class="`nav-link ${show === 'faq' ? 'active' : ''}`" @click="scrollTo('faq'); scrollTop();">{{ config.faqTitle || 'Frequently Asked Questions' }}</a>
+            </li>
+            <li @click="show = 'changelog'; active = false; closeNav(); pushstate('/changelog')" v-if="config.changelog" class="nav-item">
+              <a :class="`nav-link ${show === 'changelog' ? 'active' : ''}`" @click="scrollTo('changelog'); scrollTop();">{{ config.changeLogTitle || 'Changelog' }}</a>
+            </li>
+          </ul>
+        </div>
+        <div class="fwd-content">
+          <div class="container">
+            <div v-if="active && !show" :id="active.slug" class="scroll-to-container">
+              <div v-html="parseMarkdown(active.template)"></div>
+            </div>
+            <section v-if="config.faq && show == 'faq'" id="faq">
+              <h2>{{ config.logTitle || 'FAQ' }}</h2>
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="accordion accordion-alterate arrow-right" id="popularTopics">
+                    <div v-for="i in config.faq" class="card">
+                      <div class="card-header" id="heading1">
+                        <h5 class="mb-0">
+                          <a href="#" class="collapsed" data-toggle="collapse" data-target="#collapse1" aria-expanded="false" aria-controls="collapse1">{{ i.title }}</a>
+                        </h5>
+                      </div>
+                      <div id="collapse1" class="collapse" aria-labelledby="heading1" data-parent="#popularTopics">
+                        <div class="card-body">{{ i.body }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section v-if="config.changelog && show == 'changelog'" id="changelog">
+              <h2>{{ config.logTitle || 'Changelog' }}</h2>
+              <div v-for="change in config.changelog">
+                <h2 id="v1-1">{{ change.title }}
+                  <small v-if="change.date" class="text-muted">({{ change.date }})</small>
+                </h2>
+                <ul class="changelog">
+                  <li v-for="item in change.changes">
+                    <span :class="`badge badge-${item.type || 'success'}`">{{ item.label }}</span> {{ item.title }}
+                  </li>
+                </ul>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+    <a id="back-to-top" data-toggle="tooltip" title="Back to Top" href="javascript:void(0)">
+      <i class="fa fa-chevron-up"></i>
+    </a>
+    <script src="assets/vendor/jquery/jquery.min.js"></script>
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/vendor/highlight.js/highlight.min.js"></script>
+    <script src="assets/vendor/jquery.easing/jquery.easing.min.js"></script>
+    <script src="assets/js/showdown.min.js"></script>
+    <script src="assets/js/axios.min.js"></script>
+    <script src="assets/js/vue.min.js"></script>
+    <script src="assets/js/vue.markdown.min.js"></script>
+    <script src="assets/js/docs.js"></script>
+  </body>
+</html>
