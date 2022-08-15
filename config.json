@@ -10,7 +10,48 @@
 		{
 			"title": "Remote Example",
 			"file": "https://raw.githubusercontent.com/fwd/nano-docs/master/source/checkout.md"
+		},
+
+		{
+			"title": "get:address",
+			"file": "https://api.fwd.dev/docs?path=/address"
+		},
+
+		{
+			"title": "get:base64",
+			"file": "https://api.fwd.dev/docs?path=/base64"
+		},
+
+		{
+			"title": "get:cache:id",
+			"file": "https://api.fwd.dev/docs?path=/cache/:id"
+		},
+
+		{
+			"title": "post:cache:id",
+			"file": "https://api.fwd.dev/docs?path=/cache/:id"
+		},
+
+		{
+			"title": "get:ip",
+			"file": "https://api.fwd.dev/docs?path=/ip"
+		},
+
+		{
+			"title": "get:news",
+			"file": "https://api.fwd.dev/docs?path=/news"
+		},
+
+		{
+			"title": "get:sentiment",
+			"file": "https://api.fwd.dev/docs?path=/sentiment"
+		},
+		
+		{
+			"title": "get:sheets",
+			"file": "https://api.fwd.dev/docs?path=/sheets"
 		}
+
 	],
 	"menu": [
 		
